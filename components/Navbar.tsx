@@ -2,18 +2,21 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth, UserButton } from "@clerk/nextjs";
 
 const navItems = [
   { href: "/stocks", label: "Stocks" },
   { href: "/stocks-to-watch", label: "Stocks to Watch" },
   { href: "/earnings", label: "Earnings" },
   { href: "/market-brief", label: "Market Brief" },
-  { href: "/watchlist", label: "Watchlist" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/about", label: "About" },
 ];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const { userId } = useAuth();
+  const isSignedIn = Boolean(userId);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
@@ -34,12 +37,26 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link href="/stocks" className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">
-            Search
-          </Link>
-          <button className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
-            Sign In
-          </button>
+          {!isSignedIn ? (
+            <>
+              <Link href="/sign-in" className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">
+                Sign In
+              </Link>
+              <Link href="/sign-up" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+                Get Started
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/dashboard" className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">
+                Dashboard
+              </Link>
+              <Link href="/watchlist" className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">
+                Watchlist
+              </Link>
+              <UserButton />
+            </>
+          )}
         </div>
 
         <button
@@ -59,12 +76,29 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <Link href="/stocks" onClick={() => setOpen(false)} className="rounded-full border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700">
-                Search
-              </Link>
-              <button className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white">Sign In</button>
-            </div>
+
+            {!isSignedIn ? (
+              <>
+                <Link href="/sign-in" onClick={() => setOpen(false)} className="rounded-full border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700">
+                  Sign In
+                </Link>
+                <Link href="/sign-up" onClick={() => setOpen(false)} className="rounded-full bg-slate-950 px-4 py-2 text-center text-sm font-semibold text-white">
+                  Get Started
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/dashboard" onClick={() => setOpen(false)} className="rounded-full border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700">
+                  Dashboard
+                </Link>
+                <Link href="/watchlist" onClick={() => setOpen(false)} className="rounded-full border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700">
+                  Watchlist
+                </Link>
+                <div className="rounded-full border border-slate-200 px-4 py-2">
+                  <UserButton />
+                </div>
+              </>
+            )}
           </div>
         </div>
       ) : null}
