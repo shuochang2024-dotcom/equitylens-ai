@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { Disclaimer } from "@/components/Disclaimer";
@@ -57,6 +58,33 @@ export default function StocksToWatchPage() {
         title="Stocks to Watch"
         description="Research-oriented lists built from mock data. The goal is to support structured discovery, not to provide personalized investment advice."
       />
+
+      <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <Link
+          href="/lists/ai-stocks-to-watch"
+          className="rounded-3xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-200 hover:shadow-lg"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">AI Stocks</p>
+          <h3 className="mt-3 text-lg font-semibold text-slate-950">AI Stocks to Watch</h3>
+          <p className="mt-2 text-sm text-slate-600">Explore key AI exposure names, research scores, and valuation context.</p>
+        </Link>
+        <Link
+          href="/lists/chinese-adr-stocks-to-watch"
+          className="rounded-3xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-200 hover:shadow-lg"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">Chinese ADRs</p>
+          <h3 className="mt-3 text-lg font-semibold text-slate-950">Chinese ADR Stocks to Watch</h3>
+          <p className="mt-2 text-sm text-slate-600">Review Chinese ADR companies with notable global investor exposure.</p>
+        </Link>
+        <Link
+          href="/lists/semiconductor-stocks-to-watch"
+          className="rounded-3xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-200 hover:shadow-lg"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">Semiconductors</p>
+          <h3 className="mt-3 text-lg font-semibold text-slate-950">Semiconductor Stocks to Watch</h3>
+          <p className="mt-2 text-sm text-slate-600">Learn about semiconductor-related names, valuation signals, and risk considerations.</p>
+        </Link>
+      </div>
 
       <div className="mt-14 space-y-14">
         {sections.map((section) => (
