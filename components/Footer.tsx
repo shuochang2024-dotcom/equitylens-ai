@@ -8,6 +8,8 @@ const links = [
   { href: "/market-brief", label: "Market Brief" },
   { href: "/pricing", label: "Pricing" },
   { href: "/education", label: "Education" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
   { href: "/about", label: "About" },
 ];
 
