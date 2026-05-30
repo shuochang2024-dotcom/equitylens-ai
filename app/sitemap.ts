@@ -31,5 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/lists/chinese-adr-stocks-to-watch` },
     { url: `${baseUrl}/lists/ev-stocks-to-watch` },
     { url: `${baseUrl}/lists/energy-stocks-to-watch` },
-  ];
+ 
+{ url: `${baseUrl}/education` },
+{ url: `${baseUrl}/education/how-to-analyze-a-stock` },
+{ url: `${baseUrl}/education/how-to-read-an-earnings-report` },
+{ url: `${baseUrl}/education/what-is-pe-ratio` },
+{ url: `${baseUrl}/education/what-is-market-cap` },
+{ url: `${baseUrl}/education/what-is-risk-analysis` },
+];
 }
