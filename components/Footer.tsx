@@ -7,6 +7,7 @@ const links = [
   { href: "/earnings", label: "Earnings" },
   { href: "/market-brief", label: "Market Brief" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/education", label: "Education" },
   { href: "/about", label: "About" },
 ];
 
