@@ -35,6 +35,36 @@ const articles = [
     href: "/education/what-is-risk-analysis",
     topic: "Risk",
   },
+  {
+    title: "What Is EPS",
+    description: "Understand earnings per share and how to use it when evaluating company profitability.",
+    href: "/education/what-is-eps",
+    topic: "Earnings",
+  },
+  {
+    title: "What Is Revenue Growth",
+    description: "Learn what revenue growth means, how to measure it, and why it signals business expansion.",
+    href: "/education/what-is-revenue-growth",
+    topic: "Growth",
+  },
+  {
+    title: "What Is Free Cash Flow",
+    description: "Explore free cash flow and why it matters more than earnings for financial health.",
+    href: "/education/what-is-free-cash-flow",
+    topic: "Cash flow",
+  },
+  {
+    title: "What Is Gross Margin",
+    description: "Understand gross margin and what it reveals about a company's pricing and efficiency.",
+    href: "/education/what-is-gross-margin",
+    topic: "Profitability",
+  },
+  {
+    title: "What Is a Stock Watchlist",
+    description: "Learn how to build and maintain a stock watchlist as a tool for organizing research.",
+    href: "/education/what-is-a-stock-watchlist",
+    topic: "Research tools",
+  },
 ];
 
 export const metadata: Metadata = {
