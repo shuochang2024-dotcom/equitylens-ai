@@ -90,12 +90,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!stock) {
     return {
       title: "Stock Analysis | EquityLens AI",
+      description:
+        "AI-powered stock research for learners, including company profile, earnings, valuation, risk, and research score. For educational purposes only.",
     };
   }
 
+  const title = stock.name
+    ? `${stock.name} (${stock.ticker}) Stock Analysis | EquityLens AI`
+    : `${stock.ticker} Stock Analysis: Earnings, Valuation, Risks and Research Score | EquityLens AI`;
+
   return {
-    title: `${stock.ticker} Stock Analysis | EquityLens AI`,
-    description: `AI-powered ${stock.ticker} stock analysis with financial information, company profile, and research insights.`,
+    title,
+    description: `AI-powered stock research for ${stock.ticker}, including company profile, earnings data, valuation metrics, risk analysis, and research score. For educational purposes only.`,
   };
 }
 
