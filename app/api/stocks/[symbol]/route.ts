@@ -1,4 +1,4 @@
-import { getStockData, getStockQuote, getCompanyProfile } from "@/lib/fmp";
+import { getStockData, getStockQuote, getCompanyProfile, FMPIncomeStatement } from "@/lib/fmp";
 import { getStockByTicker } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -112,14 +112,16 @@ export async function GET(
 
       // Normalize income statement data
       if (fmpData.incomeStatement && fmpData.incomeStatement.length > 0) {
-        response.incomeStatement = fmpData.incomeStatement.slice(0, 5).map((stmt) => ({
-          period: `${stmt.calendarYear}-${stmt.period}`,
-          revenue: stmt.revenue,
-          netIncome: stmt.netIncome,
-          grossProfit: stmt.grossProfit,
-          eps: stmt.eps,
-          operatingIncome: stmt.operatingIncome,
-        }));
+        response.incomeStatement = fmpData.incomeStatement.slice(0, 5).map(
+          (stmt: FMPIncomeStatement) => ({
+            period: `${stmt.calendarYear}-${stmt.period}`,
+            revenue: stmt.revenue,
+            netIncome: stmt.netIncome,
+            grossProfit: stmt.grossProfit,
+            eps: stmt.eps,
+            operatingIncome: stmt.operatingIncome,
+          })
+        );
       }
 
       return NextResponse.json(response);

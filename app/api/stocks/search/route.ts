@@ -1,4 +1,8 @@
-import { searchStocks } from "@/lib/fmp";
+import {
+  searchStockDirectory,
+  searchStocks,
+  searchStocksByTheme,
+} from "@/lib/fmp";
 import { stocks } from "@/data/stocks";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +13,68 @@ interface SearchResult {
   name: string;
   exchange?: string;
   currency?: string;
-  matchType?: "fmp" | "mock";
+  stockExchange?: string;
+  sector?: string;
+  industry?: string;
+  marketCap?: number | null;
+  price?: number | null;
+  matchType?: "directory" | "fmp" | "theme" | "mock";
+}
+
+function normalizeDirectoryResult(item: any): SearchResult {
+  const symbol = String(item.symbol || item.ticker || "").toUpperCase();
+  const price = item.price == null ? null : Number(item.price);
+  const exchange = item.exchange || item.exchangeShortName || item.stockExchange;
+
+  return {
+    symbol,
+    name: String(item.name || item.companyName || ""),
+    exchange,
+    stockExchange: exchange,
+    sector: undefined,
+    industry: undefined,
+    marketCap: null,
+    price,
+    matchType: "directory",
+  };
+}
+
+function normalizeFMPResult(result: any): SearchResult {
+  const symbol = String(result.symbol || "").toUpperCase();
+  const price = result.price == null ? null : Number(result.price);
+
+  return {
+    symbol,
+    name: String(result.name || result.companyName || ""),
+    exchange: result.stockExchange || result.exchange,
+    stockExchange: result.stockExchange || result.exchange,
+    currency: result.currency,
+    sector: result.sector,
+    industry: result.industry,
+    marketCap:
+      result.marketCap == null ? null : Number(result.marketCap),
+    price,
+    matchType: "fmp",
+  };
+}
+
+function normalizeThemeResult(result: any): SearchResult {
+  const symbol = String(result.symbol || "").toUpperCase();
+  const price = result.price == null ? null : Number(result.price);
+
+  return {
+    symbol,
+    name: String(result.companyName || result.name || ""),
+    exchange: result.stockExchange || result.exchange,
+    stockExchange: result.stockExchange || result.exchange,
+    currency: result.currency,
+    sector: result.sector,
+    industry: result.industry,
+    marketCap:
+      result.marketCap == null ? null : Number(result.marketCap),
+    price,
+    matchType: "theme",
+  };
 }
 
 /**
@@ -28,29 +93,46 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Try to fetch from FMP API
-    const fmpResults = await searchStocks(query, 10);
+    const normalizedQuery = query.trim();
 
-    // If FMP returns results, use those
-    if (fmpResults && fmpResults.length > 0) {
-      const normalized: SearchResult[] = fmpResults.map((result) => ({
-        symbol: result.symbol,
-        name: result.name,
-        exchange: result.stockExchange,
-        currency: result.currency,
-        matchType: "fmp",
-      }));
+    const directoryResults = await searchStockDirectory(normalizedQuery);
+    const fmpResults = await searchStocks(normalizedQuery, 50);
+    const themeResults = await searchStocksByTheme(normalizedQuery, 50);
 
+    const mergedResults: SearchResult[] = [];
+    const seen = new Set<string>();
+
+    const pushResults = (items: SearchResult[]) => {
+      for (const item of items) {
+        const symbol = String(item.symbol || "").toUpperCase();
+        if (!symbol || seen.has(symbol)) continue;
+        seen.add(symbol);
+        mergedResults.push(item);
+        if (mergedResults.length >= 50) return;
+      }
+    };
+
+    pushResults(directoryResults.map(normalizeDirectoryResult));
+    if (mergedResults.length < 50) {
+      pushResults(fmpResults.map(normalizeFMPResult));
+    }
+    if (mergedResults.length < 50) {
+      pushResults(themeResults.map(normalizeThemeResult));
+    }
+
+    const results = mergedResults.slice(0, 50);
+
+    if (results.length > 0) {
       return NextResponse.json({
         success: true,
-        query,
-        results: normalized,
-        source: "fmp",
+        query: normalizedQuery,
+        results,
+        source: "combined",
       });
     }
 
-    // Fallback to mock data if FMP fails
-    const queryLower = query.toLowerCase();
+    // Fallback to mock data if no results were discovered
+    const queryLower = normalizedQuery.toLowerCase();
     const mockResults = stocks
       .filter(
         (stock) =>
@@ -61,14 +143,19 @@ export async function GET(request: NextRequest) {
       .map((stock) => ({
         symbol: stock.ticker,
         name: stock.name,
-        exchange: "NASDAQ", // Default for mock data
+        exchange: "NASDAQ",
+        stockExchange: "NASDAQ",
         currency: "USD",
+        sector: stock.sector,
+        industry: stock.industry,
+        marketCap: null,
+        price: stock.price,
         matchType: "mock" as const,
       }));
 
     return NextResponse.json({
       success: true,
-      query,
+      query: normalizedQuery,
       results: mockResults,
       source: "mock",
       note: "Using mock data - FMP API may not be available",
@@ -76,7 +163,6 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error in search route:", error);
 
-    // Return error response
     return NextResponse.json(
       { error: "Failed to search stocks", details: String(error) },
       { status: 500 }

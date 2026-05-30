@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "EquityLens AI | Smarter Stock Research Powered by AI",
   description:
     "EquityLens AI helps individual investors understand U.S. stocks faster with AI summaries, research scores, earnings breakdowns, valuation checks, and risk analysis.",
+  verification: {
+    google: "gwV7D6WyODw75kNKOY1NieyBA-PBr_wgyduQXIcNKtI",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
